@@ -17,8 +17,23 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     @IBAction func closeGallery(_ sender: UIBarButtonItem) {
         dismiss(animated: true) {
+            self.setThumbnail()
             self.document?.gallery = self.gallery
             self.document?.close()
+        }
+    }
+    
+    private func setThumbnail(){
+        if let imageURL = gallery?.images.first?.URL?.imageURL {
+            print("P: THUMBNAIL IMAGE URL", imageURL)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                if let data = try? Data(contentsOf: imageURL) {
+                    print("P: THUMBNAIL DATA", data)
+                    DispatchQueue.main.async {
+                        self?.document?.thumbnail = UIImage(data: data)
+                    }
+                }
+            }
         }
     }
     
