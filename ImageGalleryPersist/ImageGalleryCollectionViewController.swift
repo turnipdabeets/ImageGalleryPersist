@@ -14,6 +14,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     var document: ImageGalleryDocument?
     var gallery: ImageGallery?
+    private var suppressBadURLWarnings = false
     private var cache = URLCache.shared
     //https://stackoverflow.com/questions/49249622/urlcache-cs193p-assignment-6
     
@@ -196,6 +197,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                                     // The download has finished.
                                     if let e = error {
                                         print("P: Error downloading picture: \(e)")
+                                        self.showWarning()
                                         placeholderContext.deletePlaceholder()
                                     } else {
                                         // No errors found.
@@ -207,13 +209,14 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                                                     // Done loading
                                                     newImage.data = imageData
                                                 placeholderContext.commitInsertion(dataSourceUpdates: { insertionIndexPath in
-                                                    print("P: DOES IT CRASH HERE?", self.gallery, self.document)
                                                     self.gallery?.images.insert(newImage, at: insertionIndexPath.item)
                                                     self.document?.updateChangeCount(.done)
                                                     })
                                                     print("P: OR HERE?")
                                                 }
                                             } else {
+                                                self.showWarning()
+                                                
                                                 print("P: Couldn't get image: Image is nil")
                                             }
                                         } else {
@@ -226,6 +229,29 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     }
                 }
             }
+        }
+    }
+    
+    private func showWarning(){
+        print("P: SHOW WARNING", !suppressBadURLWarnings)
+        if !suppressBadURLWarnings {
+            let alert = UIAlertController(
+                title: "Image Transfer Failed",
+                message: "Couldn't transfer the dropped image from its source.\nShow this warning in the future?",
+                preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(
+                title: "Keep Warning",
+                style: .default))
+            
+            alert.addAction(UIAlertAction(
+                title: "Stop Warning",
+                style: .destructive,
+                handler: { action in
+                    self.suppressBadURLWarnings = true
+            }
+            ))
+            present(alert, animated: true)
         }
     }
     
