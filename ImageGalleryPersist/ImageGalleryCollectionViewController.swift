@@ -14,6 +14,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     var document: ImageGalleryDocument?
     var gallery: ImageGallery?
+    private var cache = URLCache.shared
+    //https://stackoverflow.com/questions/49249622/urlcache-cs193p-assignment-6
     
     @IBAction func closeGallery(_ sender: UIBarButtonItem) {
         dismiss(animated: true) {
@@ -65,12 +67,13 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("GALLERY", gallery ?? "none")
         // enable drag for iPhone
         collectionView?.dragInteractionEnabled = true
         // set delegate
         collectionView?.dragDelegate = self
         collectionView?.dropDelegate = self
+        // set cache capacity
+        cache = URLCache(memoryCapacity: 100, diskCapacity: 100, diskPath: nil)
     }
     
     // Cell Resizing on Device Rotation
@@ -81,7 +84,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: UICollectionViewDataSource
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("P: numberOfItemsInSection", gallery?.images.count)
         return gallery?.images.count ?? 0
     }
     
