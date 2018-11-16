@@ -26,7 +26,11 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             document?.open { [weak self] success in
                 if success {
                     self?.title = self?.document?.localizedName
-                    self?.gallery = self?.document?.gallery
+                    if let gallery = self?.document?.gallery {
+                        self?.gallery = gallery
+                    }else {
+                        self?.gallery = ImageGallery(title: self?.document?.localizedName ?? "Not Named")
+                    }
                 }
             }
         }
@@ -162,28 +166,29 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                                 URLSession.init(configuration: .default).dataTask(with: url) { (data, response, error) in
                                     // The download has finished.
                                     if let e = error {
-                                        print("Error downloading picture: \(e)")
+                                        print("P: Error downloading picture: \(e)")
                                         placeholderContext.deletePlaceholder()
                                     } else {
                                         // No errors found.
                                         if let res = response as? HTTPURLResponse {
-                                            print("Downloaded picture with response code \(res.statusCode)")
+                                            print("P: Downloaded picture with response code \(res.statusCode)")
                                             if let imageData = data {
                                                 // UI needs to be updated on main queue
                                                 DispatchQueue.main.async {
                                                     // Done loading
                                                     newImage.data = imageData
                                                 placeholderContext.commitInsertion(dataSourceUpdates: { insertionIndexPath in
-                                                    print("DOES IT CRASH HERE?")
+                                                    print("P: DOES IT CRASH HERE?", self.gallery, self.document)
                                                     self.gallery?.images.insert(newImage, at: insertionIndexPath.item)
                                                     self.document?.updateChangeCount(.done)
                                                     })
+                                                    print("P: OR HERE?")
                                                 }
                                             } else {
-                                                print("Couldn't get image: Image is nil")
+                                                print("P: Couldn't get image: Image is nil")
                                             }
                                         } else {
-                                            print("Couldn't get response code for some reason")
+                                            print("P: Couldn't get response code for some reason")
                                         }
                                     }
                                     }.resume()
