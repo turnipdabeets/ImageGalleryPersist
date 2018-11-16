@@ -15,6 +15,12 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     var document: ImageGalleryDocument?
     var gallery: ImageGallery?
     
+    @IBAction func closeGallery(_ sender: UIBarButtonItem) {
+        dismiss(animated: true) {
+            self.document?.close()
+        }
+    }
+    
     private var imageWidth: CGFloat {
         guard let collectionView = collectionView else { return 0 }
         return (collectionView.frame.size.width / 2) - 5
@@ -31,6 +37,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     }else {
                         self?.gallery = ImageGallery(title: self?.document?.localizedName ?? "Not Named")
                     }
+                    print("P: gallery set", self?.gallery, self?.title)
                 }
             }
         }
