@@ -17,6 +17,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     @IBAction func closeGallery(_ sender: UIBarButtonItem) {
         dismiss(animated: true) {
+            self.document?.gallery = self.gallery
             self.document?.close()
         }
     }
@@ -33,10 +34,13 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                 if success {
                     self?.title = self?.document?.localizedName
                     if let gallery = self?.document?.gallery {
+                        print("P: do have document gallery", gallery)
                         self?.gallery = gallery
                     }else {
+                        print("P: don't have document gallery")
                         self?.gallery = ImageGallery(title: self?.document?.localizedName ?? "Not Named")
                     }
+                    self?.collectionView?.reloadData()
                     print("P: gallery set", self?.gallery, self?.title)
                 }
             }
@@ -62,6 +66,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: UICollectionViewDataSource
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("P: numberOfItemsInSection", gallery?.images.count)
         return gallery?.images.count ?? 0
     }
     
