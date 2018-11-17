@@ -13,7 +13,11 @@ private let reuseIdentifier = "ImageCell"
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDragDelegate, UICollectionViewDropDelegate {
     
     var document: ImageGalleryDocument?
-    var gallery: ImageGallery?
+    var gallery: ImageGallery? {
+        didSet {
+            collectionView?.reloadData()
+        }
+    }
     private var suppressBadURLWarnings = false
     private var cache = URLCache.shared
     //https://stackoverflow.com/questions/49249622/urlcache-cs193p-assignment-6
@@ -58,8 +62,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                         print("P: don't have document gallery")
                         self?.gallery = ImageGallery(title: self?.document?.localizedName ?? "Not Named")
                     }
-                    self?.collectionView?.reloadData()
-                    print("P: gallery set", self?.gallery, self?.title)
                 }
             }
         }
