@@ -19,7 +19,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     //https://stackoverflow.com/questions/49249622/urlcache-cs193p-assignment-6
     
     @IBAction func closeGallery(_ sender: UIBarButtonItem) {
-        dismiss(animated: true) {
+        presentingViewController?.dismiss(animated: true) {
             self.setThumbnail()
             self.document?.gallery = self.gallery
             self.document?.close()
